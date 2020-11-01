@@ -11,20 +11,22 @@ import org.kodein.di.ktor.kodein
 import dto.PostRequestDto
 import dto.PostResponseDto
 import dto.RepostRequestDto
+import io.ktor.util.*
 import model.PostModel
 import model.PostType
 import repository.PostRepository
 
+@KtorExperimentalAPI
 fun Routing.v1() {
 
     //раскомментировать для отладки
-    trace { application.log.trace(it.buildText()) }
+ //   trace { application.log.trace(it.buildText()) }
 
     val repo by kodein().instance<PostRepository>()
 
     route("/") {
         get {
-            call.respondText("Hello!!!", ContentType.Text.Plain)
+            call.respondText("click - /api/v1/posts", ContentType.Text.Plain)
         }
     }
 

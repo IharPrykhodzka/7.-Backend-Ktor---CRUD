@@ -5,6 +5,7 @@ import io.ktor.http.*
 import io.ktor.response.*
 import io.ktor.routing.*
 import io.ktor.server.cio.*
+import io.ktor.util.*
 import kotlinx.coroutines.runBlocking
 import org.kodein.di.generic.bind
 import org.kodein.di.generic.singleton
@@ -19,8 +20,9 @@ fun main(args: Array<String>) {
     EngineMain.main(args)
 }
 
+@KtorExperimentalAPI
 fun Application.module(testing: Boolean = false) {
-
+    println(testing)
     install(Routing) {
         v1()
     }
