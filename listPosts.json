@@ -1,0 +1,236 @@
+[
+  {
+    "id": 1,
+    "author": "Igor Prikhodko",
+    "content": "Something",
+    "created": {
+      "date": {
+        "year": 2020,
+        "month": 10,
+        "day": 1
+      },
+      "time": {
+        "hour": 11,
+        "minute": 11,
+        "second": 11,
+        "nano": 0
+      }
+    },
+    "likesCount": 1,
+    "commentsCount": 0,
+    "shareCount": 2,
+    "likedByMe": true,
+    "commentedByMe": false,
+    "sharedByMe": true,
+    "address": null,
+    "location": null,
+    "video": null,
+    "advertising": null,
+    "source": null,
+    "postType": "SIMPLE_POST",
+    "isHidden": false,
+    "timesShown": 0
+  },
+  {
+    "id": 2,
+    "author": "Tarzan from Africa",
+    "content": "AAAAAaaaaAAAAAaaaAAAAaaa!!!!",
+    "created": {
+      "date": {
+        "year": 2020,
+        "month": 10,
+        "day": 1
+      },
+      "time": {
+        "hour": 12,
+        "minute": 11,
+        "second": 11,
+        "nano": 0
+      }
+    },
+    "likesCount": 10,
+    "commentsCount": 0,
+    "shareCount": 0,
+    "likedByMe": false,
+    "commentedByMe": false,
+    "sharedByMe": false,
+    "address": null,
+    "location": null,
+    "video": {
+      "url": "https://www.youtube.com/watch?v\u003drxr3OzyGcyE"
+    },
+    "advertising": null,
+    "source": null,
+    "postType": "VIDEO_POST",
+    "isHidden": false,
+    "timesShown": 0
+  },
+  {
+    "id": 3,
+    "author": "Shaverma",
+    "content": "12:00 free 10 minutes",
+    "created": {
+      "date": {
+        "year": 2020,
+        "month": 10,
+        "day": 2
+      },
+      "time": {
+        "hour": 11,
+        "minute": 11,
+        "second": 11,
+        "nano": 0
+      }
+    },
+    "likesCount": 0,
+    "commentsCount": 3,
+    "shareCount": 2,
+    "likedByMe": false,
+    "commentedByMe": true,
+    "sharedByMe": false,
+    "address": "Санкт-Петербург, Коменданский пр.",
+    "location": {
+      "lat": 60.012878,
+      "lng": 30.252335
+    },
+    "video": null,
+    "advertising": null,
+    "source": null,
+    "postType": "EVENT_POST",
+    "isHidden": false,
+    "timesShown": 0
+  },
+  {
+    "id": 4,
+    "author": "WarMan",
+    "content": "The World is mine!!!",
+    "created": {
+      "date": {
+        "year": 2020,
+        "month": 11,
+        "day": 1
+      },
+      "time": {
+        "hour": 11,
+        "minute": 11,
+        "second": 11,
+        "nano": 0
+      }
+    },
+    "likesCount": 5,
+    "commentsCount": 0,
+    "shareCount": 2,
+    "likedByMe": true,
+    "commentedByMe": false,
+    "sharedByMe": false,
+    "address": null,
+    "location": null,
+    "video": null,
+    "advertising": null,
+    "source": null,
+    "postType": "SIMPLE_POST",
+    "isHidden": false,
+    "timesShown": 0
+  },
+  {
+    "id": 5,
+    "author": "Brutal BatMan",
+    "content": "Rock in my life!",
+    "created": {
+      "date": {
+        "year": 2020,
+        "month": 10,
+        "day": 1
+      },
+      "time": {
+        "hour": 11,
+        "minute": 11,
+        "second": 11,
+        "nano": 0
+      }
+    },
+    "likesCount": 100,
+    "commentsCount": 3,
+    "shareCount": 2,
+    "likedByMe": true,
+    "commentedByMe": false,
+    "sharedByMe": true,
+    "address": null,
+    "location": null,
+    "video": null,
+    "advertising": {
+      "imageUrl": "https://static-ru.insales.ru/images/products/1/6335/205330623/460c2a624899693ea071e424032b89c5572eaa0a.jpg",
+      "adsUrl": "https://www.arhybes.com/video-batmetal"
+    },
+    "source": null,
+    "postType": "ADVERTISING",
+    "isHidden": false,
+    "timesShown": 0
+  },
+  {
+    "id": 6,
+    "author": "CrazyMan",
+    "content": "I want to see the world in the fire!!!",
+    "created": {
+      "date": {
+        "year": 2020,
+        "month": 9,
+        "day": 1
+      },
+      "time": {
+        "hour": 11,
+        "minute": 11,
+        "second": 11,
+        "nano": 0
+      }
+    },
+    "likesCount": 2,
+    "commentsCount": 0,
+    "shareCount": 0,
+    "likedByMe": true,
+    "commentedByMe": false,
+    "sharedByMe": false,
+    "address": null,
+    "location": null,
+    "video": null,
+    "advertising": null,
+    "source": {
+      "id": 5,
+      "author": "Brutal BatMan",
+      "content": "Rock in my life!",
+      "created": {
+        "date": {
+          "year": 2020,
+          "month": 10,
+          "day": 1
+        },
+        "time": {
+          "hour": 11,
+          "minute": 11,
+          "second": 11,
+          "nano": 0
+        }
+      },
+      "likesCount": 100,
+      "commentsCount": 3,
+      "shareCount": 2,
+      "likedByMe": true,
+      "commentedByMe": false,
+      "sharedByMe": true,
+      "address": null,
+      "location": null,
+      "video": null,
+      "advertising": {
+        "imageUrl": "https://static-ru.insales.ru/images/products/1/6335/205330623/460c2a624899693ea071e424032b89c5572eaa0a.jpg",
+        "adsUrl": "https://www.arhybes.com/video-batmetal"
+      },
+      "source": null,
+      "postType": "ADVERTISING",
+      "isHidden": false,
+      "timesShown": 0
+    },
+    "postType": "REPOST",
+    "isHidden": false,
+    "timesShown": 0
+  }
+]
