@@ -4,7 +4,7 @@ import io.ktor.gson.*
 import io.ktor.http.*
 import io.ktor.response.*
 import io.ktor.routing.*
-import io.ktor.server.cio.*
+import io.ktor.server.netty.*
 import io.ktor.util.*
 import kotlinx.coroutines.runBlocking
 import org.kodein.di.generic.bind
@@ -23,6 +23,14 @@ fun main(args: Array<String>) {
 @KtorExperimentalAPI
 fun Application.module(testing: Boolean = false) {
     println(testing)
+
+    install(ContentNegotiation) {
+        gson {
+            setPrettyPrinting()
+            serializeNulls()
+        }
+    }
+
     install(Routing) {
         v1()
     }
@@ -61,10 +69,5 @@ fun Application.module(testing: Boolean = false) {
         }
     }
 
-    install(ContentNegotiation) {
-        gson {
-            setPrettyPrinting()
-            serializeNulls()
-        }
-    }
+
 }
