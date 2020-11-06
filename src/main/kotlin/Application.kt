@@ -54,16 +54,7 @@ fun Application.module(testing: Boolean = false) {
         bind<PostRepository>() with singleton {
             PostRepositoryMutexImpl().apply {
                 runBlocking {
-                    repeat(10) {
-                        save(
-                            PostModel(
-                                it,
-                                "author_$it",
-                                "test_$it",
-                                LocalDateTime.of(2020, 2, 23, 12, 12, 12)
-                            )
-                        )
-                    }
+                    main()
                 }
             }
         }

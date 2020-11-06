@@ -23,15 +23,15 @@ import repository.PostRepository
 fun Routing.v1() {
 
 
-    trace { application.log.trace(it.buildText()) }
+//    trace { application.log.trace(it.buildText()) }
 
     val repo by kodein().instance<PostRepository>()
 
-    route("/") {
-        get {
-            call.respondText("click - /api/v1/posts", ContentType.Text.Plain)
-        }
-    }
+//    route("/") {
+//        get {
+//            call.respondText("click - /api/v1/posts", ContentType.Text.Plain)
+//        }
+//    }
 
 
 
