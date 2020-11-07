@@ -1,1 +1,1 @@
-web: ./build/install/7. Backend Ktor - CRUD/bin/7. Backend Ktor - CRUD
+web: ./build/install/Backend_Ktor_CRUD/bin/Backend_Ktor_CRUD
