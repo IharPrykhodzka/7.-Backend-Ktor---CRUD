@@ -1,21 +1,18 @@
 package route
 
+import dto.PostRequestDto
+import dto.PostResponseDto
+import dto.RepostRequestDto
 import io.ktor.application.*
 import io.ktor.features.*
 import io.ktor.http.*
 import io.ktor.request.*
 import io.ktor.response.*
 import io.ktor.routing.*
-
-import org.kodein.di.generic.instance
-import org.kodein.di.ktor.kodein
-
-import dto.PostRequestDto
-import dto.PostResponseDto
-import dto.RepostRequestDto
-
 import model.PostModel
 import model.PostType
+import org.kodein.di.generic.instance
+import org.kodein.di.ktor.kodein
 import repository.PostRepository
 
 
@@ -26,14 +23,6 @@ fun Routing.v1() {
 //    trace { application.log.trace(it.buildText()) }
 
     val repo by kodein().instance<PostRepository>()
-
-//    route("/") {
-//        get {
-//            call.respondText("click - /api/v1/posts", ContentType.Text.Plain)
-//        }
-//    }
-
-
 
     route("/api/v1/posts") {
 
