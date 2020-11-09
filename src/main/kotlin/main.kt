@@ -88,4 +88,6 @@ fun main() {
 //        serializeNulls()
 //    }.create()
 //    Files.write(Paths.get("./listPosts.json"), gson.toJson(postsList).toByteArray(), StandardOpenOption.CREATE)
+
+
 }
