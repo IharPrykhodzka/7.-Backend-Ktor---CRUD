@@ -1,3 +1,4 @@
+
 import io.ktor.application.*
 import io.ktor.features.*
 import io.ktor.gson.*
@@ -7,14 +8,13 @@ import io.ktor.routing.*
 import io.ktor.server.netty.*
 import io.ktor.util.*
 import kotlinx.coroutines.runBlocking
+import model.PostModel
 import org.kodein.di.generic.bind
 import org.kodein.di.generic.singleton
 import org.kodein.di.ktor.KodeinFeature
-import model.PostModel
 import repository.PostRepository
 import repository.PostRepositoryMutexImpl
 import route.v1
-import java.time.LocalDateTime
 
 fun main(args: Array<String>) {
     EngineMain.main(args)
@@ -54,7 +54,8 @@ fun Application.module(testing: Boolean = false) {
         bind<PostRepository>() with singleton {
             PostRepositoryMutexImpl().apply {
                 runBlocking {
-                    main()
+                    save(PostModel(0, "Igor", "test"))
+
                 }
             }
         }
