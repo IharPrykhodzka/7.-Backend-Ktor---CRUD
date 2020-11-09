@@ -15,6 +15,7 @@ import org.kodein.di.ktor.KodeinFeature
 import repository.PostRepository
 import repository.PostRepositoryMutexImpl
 import route.v1
+import java.time.LocalDateTime
 
 fun main(args: Array<String>) {
     EngineMain.main(args)
@@ -54,7 +55,16 @@ fun Application.module(testing: Boolean = false) {
         bind<PostRepository>() with singleton {
             PostRepositoryMutexImpl().apply {
                 runBlocking {
-                    save(PostModel(0, "Igor", "test"))
+                    repeat(10) {
+                        save(
+                            PostModel(
+                                it,
+                                "author_$it",
+                                "test_$it",
+                                LocalDateTime.of(2020, 7, 29, 11, 35, 0)
+                            )
+                        )
+                    }
 
                 }
             }
