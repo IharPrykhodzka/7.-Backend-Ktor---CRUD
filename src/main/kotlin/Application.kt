@@ -12,7 +12,6 @@ import org.kodein.di.generic.singleton
 import org.kodein.di.ktor.KodeinFeature
 import repository.PostRepository
 import repository.PostRepositoryMutexImpl
-import repository.generateContent
 import route.v1
 
 fun main(args: Array<String>) {
@@ -53,13 +52,9 @@ fun Application.module(testing: Boolean = false) {
         bind<PostRepository>() with singleton {
             PostRepositoryMutexImpl().apply {
                 runBlocking {
-                    generateContent().forEach() {
-                        save(it)
-                    }
+                    main()
                 }
             }
         }
     }
-
-
 }
