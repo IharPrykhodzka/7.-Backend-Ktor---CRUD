@@ -3,7 +3,7 @@ package dto
 import model.UserModel
 
 class UserResponseDto(
-    val id: Long,
+    val id: Int,
     val userName: String
 ) {
     companion object{
