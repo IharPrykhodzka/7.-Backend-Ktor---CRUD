@@ -1,6 +1,2 @@
-…2020-11-01 14:37:29.946 [Test worker] INFO  ktor.test - No ktor.deployment.watch patterns specified, automatic reload is not active
-`2020-11-01 14:37:30.157 [DefaultDispatcher-worker-1 @request#1] TRACE ktor.test - Trace for []
-*/, segment:0 -> SUCCESS @ /(method:GET))
-8  /(method:GET), segment:0 -> SUCCESS @ /(method:GET))
->  /api, segment:0 -> FAILURE "Selector didn't match" @ /api)
-
+…2020-11-11 15:45:31.192 [Test worker] INFO  ktor.test - No ktor.deployment.watch patterns specified, automatic reload is not active
+false
