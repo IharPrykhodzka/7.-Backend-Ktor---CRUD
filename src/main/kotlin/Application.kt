@@ -41,11 +41,6 @@ fun Application.module(testing: Boolean = false) {
         }
     }
 
-    install(Routing) {
-        val routingV1 by kodein().instance<RoutingV1>()
-        routingV1.setup(this)
-    }
-
     install(StatusPages) {
         exception<ParameterConversionException> { e ->
             call.respond(HttpStatusCode.BadRequest)
@@ -75,7 +70,7 @@ fun Application.module(testing: Boolean = false) {
 
     install(KodeinFeature) {
         constant(tag = "upload-dir") with (
-                environment.config.propertyOrNull("ncraft.upload.dir")?.getString()
+                environment.config.propertyOrNull("ktor.ncraft.upload.dir")?.getString()
                     ?: throw ConfigurationException("Upload dir is not specified")
                 )
         bind<PostRepository>() with singleton {
@@ -124,5 +119,10 @@ fun Application.module(testing: Boolean = false) {
                 userService.getModelById(id)
             }
         }
+    }
+
+    install(Routing) {
+        val routingV1 by kodein().instance<RoutingV1>()
+        routingV1.setup(this)
     }
 }

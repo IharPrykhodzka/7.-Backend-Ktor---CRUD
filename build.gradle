@@ -32,6 +32,7 @@ dependencies {
     implementation "io.ktor:ktor-server-netty:$ktor_version"
     implementation "io.ktor:ktor-gson:$ktor_version"
     implementation "ch.qos.logback:logback-classic:$logback_version"
+    implementation "commons-logging:commons-logging:1.2"
     implementation 'org.kodein.di:kodein-di-generic-jvm:6.3.3'
     implementation 'org.kodein.di:kodein-di-framework-ktor-server-jvm:6.3.3'
 
