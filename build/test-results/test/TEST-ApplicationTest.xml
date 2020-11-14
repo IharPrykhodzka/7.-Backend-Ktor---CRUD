@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="ApplicationTest" tests="1" skipped="0" failures="1" errors="0" timestamp="2020-11-13T10:10:43" hostname="DESKTOP-SN5P179" time="0.306">
+<testsuite name="ApplicationTest" tests="1" skipped="0" failures="1" errors="0" timestamp="2020-11-13T12:54:19" hostname="DESKTOP-SN5P179" time="0.283">
   <properties/>
-  <testcase name="test get all" classname="ApplicationTest" time="0.306">
+  <testcase name="testAuth" classname="ApplicationTest" time="0.283">
     <failure message="javax.naming.ConfigurationException: Upload dir is not specified" type="javax.naming.ConfigurationException">javax.naming.ConfigurationException: Upload dir is not specified
-	at ApplicationKt$module$3.invoke(Application.kt:74)
+	at ApplicationKt$module$3.invoke(Application.kt:76)
 	at ApplicationKt$module$3.invoke(Application.kt)
 	at org.kodein.di.ktor.KodeinFeature$Feature$install$kodeinInstance$1.invoke(feature.kt:36)
 	at org.kodein.di.ktor.KodeinFeature$Feature$install$kodeinInstance$1.invoke(feature.kt:24)
@@ -15,16 +15,16 @@
 	at org.kodein.di.ktor.KodeinFeature$Feature.install(feature.kt:34)
 	at org.kodein.di.ktor.KodeinFeature$Feature.install(feature.kt:24)
 	at io.ktor.application.ApplicationFeatureKt.install(ApplicationFeature.kt:64)
-	at ApplicationKt.module(Application.kt:71)
-	at ApplicationKt.module$default(Application.kt:34)
-	at ApplicationTest$test get all$1.invoke(ApplicationTest.kt:10)
-	at ApplicationTest$test get all$1.invoke(ApplicationTest.kt:6)
+	at ApplicationKt.module(Application.kt:73)
+	at ApplicationKt.module$default(Application.kt:36)
+	at ApplicationTest$configure$1.invoke(ApplicationTest.kt:22)
+	at ApplicationTest$configure$1.invoke(ApplicationTest.kt:12)
 	at io.ktor.server.testing.TestEngineKt$withTestApplication$1.invoke(TestEngine.kt:67)
 	at io.ktor.server.testing.TestEngineKt$withTestApplication$1.invoke(TestEngine.kt)
 	at io.ktor.server.testing.TestEngineKt.withApplication(TestEngine.kt:49)
 	at io.ktor.server.testing.TestEngineKt.withApplication$default(TestEngine.kt:43)
 	at io.ktor.server.testing.TestEngineKt.withTestApplication(TestEngine.kt:66)
-	at ApplicationTest.test get all(ApplicationTest.kt:10)
+	at ApplicationTest.testAuth(ApplicationTest.kt:27)
 	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
 	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
 	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
@@ -74,7 +74,7 @@
 	at java.base/java.lang.Thread.run(Thread.java:834)
 </failure>
   </testcase>
-  <system-out><![CDATA[2020-11-13 13:10:43.709 [Test worker] INFO  ktor.test - No ktor.deployment.watch patterns specified, automatic reload is not active
+  <system-out><![CDATA[2020-11-13 15:54:19.438 [Test worker] INFO  ktor.test - No ktor.deployment.watch patterns specified, automatic reload is not active
 false
 ]]></system-out>
   <system-err><![CDATA[]]></system-err>
