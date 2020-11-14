@@ -9,7 +9,7 @@ import io.ktor.gson.*
 import io.ktor.http.*
 import io.ktor.response.*
 import io.ktor.routing.*
-import io.ktor.server.netty.*
+import io.ktor.server.cio.*
 import kotlinx.coroutines.runBlocking
 import org.kodein.di.generic.*
 import org.kodein.di.ktor.KodeinFeature
