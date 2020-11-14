@@ -5,8 +5,6 @@ import io.ktor.http.*
 import io.ktor.http.content.*
 import io.ktor.server.testing.*
 import io.ktor.utils.io.streams.*
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.runBlocking
 import org.junit.Test
 import java.nio.file.Files
 import java.nio.file.Paths
@@ -19,23 +17,19 @@ class ApplicationTest {
     private val multipartContentType =
         ContentType.MultiPart.FormData.withParameter("boundary", multipartBoundary).toString()
     private val uploadPath = Files.createTempDirectory("test").toString()
-    private val configure: Application.() -> Unit = {
-        (environment.config as MapApplicationConfig).apply {
-            put("ktor.ncraft.upload.dir", uploadPath)
-        }
-        module()
-    }
 
     @Test
     fun testUpload() {
-        withTestApplication(configure) {
+        withTestApplication(configure()) {
             with(handleRequest(HttpMethod.Post, "/api/v1/media") {
                 addHeader(HttpHeaders.ContentType, multipartContentType)
+                addHeader(HttpHeaders.Authorization, "Bearer ${register()}")
                 setBody(
                     multipartBoundary,
                     listOf(
                         PartData.FileItem({
-                            Files.newInputStream(Paths.get("./src/test/resources/test.png")).asInput()
+                            Files.newInputStream(Paths.get("./src/test/resources/test.png"))
+                                .asInput()
                         }, {}, headersOf(
                             HttpHeaders.ContentDisposition to listOf(
                                 ContentDisposition.File.withParameter(
@@ -53,7 +47,6 @@ class ApplicationTest {
                     )
                 )
             }) {
-                response
                 assertEquals(HttpStatusCode.OK, response.status())
                 assertTrue(response.content!!.contains("\"id\""))
             }
@@ -62,77 +55,62 @@ class ApplicationTest {
 
     @Test
     fun testUnauthorized() {
-        withTestApplication(configure) {
+        withTestApplication(configure()) {
             with(handleRequest(HttpMethod.Get, "/api/v1/posts")) {
-                response
                 assertEquals(HttpStatusCode.Unauthorized, response.status())
             }
         }
     }
 
     @Test
-    fun testAuth() {
-        withTestApplication(configure) {
-            runBlocking {
-                var token: String? = null
-                with(handleRequest(HttpMethod.Post, "/api/v1/authentication") {
-                    addHeader(HttpHeaders.ContentType, jsonContentType.toString())
-                    setBody(
-                        """
-                        {
-                            "username": "Igor",
-                            "password": "1qaz2wsx"
-                        }
-                    """.trimIndent()
-                    )
-                }) {
-                    println(response.content)
-                    response
-                    assertEquals(HttpStatusCode.OK, response.status())
-                    token = JsonPath.read<String>(response.content!!, "$.token")
-                }
-                delay(500)
-                with(handleRequest(HttpMethod.Get, "/api/v1/me") {
-                    addHeader(HttpHeaders.Authorization, "Bearer $token")
-                }) {
-                    response
-                    assertEquals(HttpStatusCode.OK, response.status())
-                    val username = JsonPath.read<String>(response.content!!, "$.username")
-                    assertEquals("Igor", username)
-                }
+    fun testRegistration() {
+        withTestApplication(configure()) {
+            with(handleRequest(HttpMethod.Get, "/api/v1/me") {
+                addHeader(HttpHeaders.Authorization, "Bearer ${register()}")
+            }) {
+                assertEquals(HttpStatusCode.OK, response.status())
+                val username = JsonPath.read<String>(response.content!!, "$.userName")
+                assertEquals("Test", username)
             }
         }
     }
 
     @Test
     fun testExpire() {
-        withTestApplication(configure) {
-            runBlocking {
-                var token: String? = null
-                with(handleRequest(HttpMethod.Post, "/api/v1/authentication") {
-                    addHeader(HttpHeaders.ContentType, jsonContentType.toString())
-                    setBody(
-                        """
-                        {
-                            "username": "Igor",
-                            "password": "1qaz2wsx"
-                        }
-                    """.trimIndent()
-                    )
-                }) {
-                    println(response.content)
-                    response
-                    assertEquals(HttpStatusCode.OK, response.status())
-                    token = JsonPath.read<String>(response.content!!, "$.token")
-                }
-                delay(5000)
-                with(handleRequest(HttpMethod.Get, "/api/v1/me") {
-                    addHeader(HttpHeaders.Authorization, "Bearer $token")
-                }) {
-                    response
-                    assertEquals(HttpStatusCode.Unauthorized, response.status())
-                }
+        withTestApplication(configure {
+            put("ktor.ncraft.tokenLifeTime", "-1000")
+        }, {
+            with(handleRequest(HttpMethod.Get, "/api/v1/me") {
+                addHeader(HttpHeaders.Authorization, "Bearer ${register()}")
+            }) {
+                assertEquals(HttpStatusCode.Unauthorized, response.status())
             }
         }
+        )
     }
+
+    private fun configure(config: MapApplicationConfig.() -> Unit = {}): Application.() -> Unit = {
+        (environment.config as MapApplicationConfig).apply {
+            put("ktor.ncraft.upload.dir", uploadPath)
+            put("ktor.ncraft.tokenLifeTime", "1000")
+            config()
+        }
+        module()
+    }
+
+    private fun TestApplicationEngine.register(): String =
+        handleRequest(HttpMethod.Post, "/api/v1/registration") {
+            addHeader(HttpHeaders.ContentType, jsonContentType.toString())
+            setBody(
+                """
+                            {
+                                "id" : 0,
+                                "userName": "Test",
+                                "password": "1qaz2wsx"
+                            }
+                        """.trimIndent()
+            )
+        }.let {
+            JsonPath.read(it.response.content!!, "$.token")
+        }
 }

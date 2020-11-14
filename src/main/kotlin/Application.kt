@@ -74,6 +74,10 @@ fun Application.module(testing: Boolean = false) {
                 environment.config.propertyOrNull("ktor.ncraft.upload.dir")?.getString()
                     ?: throw ConfigurationException("Upload dir is not specified")
                 )
+        constant(tag = "token-life-time") with (
+                environment.config.propertyOrNull("ktor.ncraft.tokenLifeTime")?.getString()?.toLongOrNull()
+                    ?: throw ConfigurationException("Upload dir is not specified")
+                )
         bind<PostRepository>() with singleton {
             PostRepositoryMutexImpl().apply {
                 runBlocking {
@@ -96,7 +100,7 @@ fun Application.module(testing: Boolean = false) {
                 }
             }
         }
-        bind<JWTTokenService>() with eagerSingleton { JWTTokenService() }
+        bind<JWTTokenService>() with eagerSingleton { JWTTokenService(instance("token-life-time")) }
         bind<PasswordEncoder>() with eagerSingleton { BCryptPasswordEncoder() }
         bind<RoutingV1>() with eagerSingleton {
             RoutingV1(
