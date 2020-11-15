@@ -96,7 +96,7 @@ fun Application.module(testing: Boolean = false) {
                 passwordEncoder = instance()
             ).apply {
                 runBlocking {
-                    saveNewModel(userName = "Igor", password = "1qaz2wsx")
+                   this@apply.saveNewModel(userName = "Igor", password = "1qaz2wsx")
                 }
             }
         }
