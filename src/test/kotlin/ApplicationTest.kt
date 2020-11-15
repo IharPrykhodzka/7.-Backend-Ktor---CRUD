@@ -1,3 +1,4 @@
+
 import com.jayway.jsonpath.JsonPath
 import io.ktor.application.*
 import io.ktor.config.*
@@ -5,7 +6,6 @@ import io.ktor.http.*
 import io.ktor.http.content.*
 import io.ktor.server.testing.*
 import io.ktor.utils.io.streams.*
-import kotlinx.coroutines.runBlocking
 import org.junit.Test
 import java.nio.file.Files
 import java.nio.file.Paths
@@ -94,35 +94,30 @@ class ApplicationTest {
     @Test
     fun testAuth() {
         withTestApplication(configure()) {
-            runBlocking {
-                var token: String? = null
-                with(handleRequest(HttpMethod.Post, "/api/v1/authentication") {
-                    addHeader(HttpHeaders.ContentType, jsonContentType.toString())
-                    setBody(
-                        """
-                        {
-                            "username": "Igor",
-                            "password": "1qaz2wsx"
-                        }
-                        """.trimIndent()
-                    )
-                }) {
-                    println(response.content)
-                    response
-                    assertEquals(HttpStatusCode.OK, response.status())
-                    token = JsonPath.read<String>(response.content!!, "$.token")
-                }
-                with(handleRequest(HttpMethod.Get, "/api/v1/me") {
-                    addHeader(HttpHeaders.Authorization, "Bearer $token")
-                }) {
-                    response
-                    assertEquals(HttpStatusCode.OK, response.status())
-                    val username = JsonPath.read<String>(response.content!!, "$.username")
-                    assertEquals("Igor", username)
-                }
+            with(handleRequest(HttpMethod.Get, "/api/v1/me") {
+                addHeader(HttpHeaders.Authorization, "Bearer ${authenticator()}")
+            }) {
+                assertEquals(HttpStatusCode.OK, response.status())
+                val username = JsonPath.read<String>(response.content!!, "$.username")
+                assertEquals("Igor", username)
             }
         }
     }
+
+    private fun TestApplicationEngine.authenticator(): String =
+        handleRequest(HttpMethod.Post, "/api/v1/authentication") {
+            addHeader(HttpHeaders.ContentType, jsonContentType.toString())
+            setBody(
+                """
+                {
+                "userName": "Igor",
+                "password": "1qaz2wsx"
+                }
+                """.trimIndent()
+            )
+        }.let {
+            JsonPath.read(it.response.content!!, "$.token")
+        }
 
     private fun configure(config: MapApplicationConfig.() -> Unit = {}): Application.() -> Unit = {
         (environment.config as MapApplicationConfig).apply {
