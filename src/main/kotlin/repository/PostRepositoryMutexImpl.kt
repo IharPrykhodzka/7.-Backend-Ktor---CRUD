@@ -76,7 +76,6 @@ class PostRepositoryMutexImpl : PostRepository {
         }
     }
 
-
     fun generateContent(): List<PostModel> {
 
         val createdTime = LocalDateTime.of(2020, 10, 1, 11, 11, 11)

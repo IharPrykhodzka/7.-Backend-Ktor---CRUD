@@ -1,113 +1,129 @@
 package route
 
-import dto.PostRequestDto
-import dto.PostResponseDto
-import dto.RepostRequestDto
+import dto.*
 import io.ktor.application.*
+import io.ktor.auth.*
 import io.ktor.features.*
-import io.ktor.http.*
+import io.ktor.http.content.*
 import io.ktor.request.*
 import io.ktor.response.*
 import io.ktor.routing.*
 import model.PostModel
 import model.PostType
-import org.kodein.di.generic.instance
-import org.kodein.di.ktor.kodein
+import model.UserModel
 import repository.PostRepository
+import service.FileService
+import service.PostService
+import service.UserService
 
 
-
-fun Routing.v1() {
-
-
-//    trace { application.log.trace(it.buildText()) }
-
-    val repo by kodein().instance<PostRepository>()
-
-    route("/") {
-        get {
-            call.respondText("click - /api/v1/posts", ContentType.Text.Plain)
-        }
-    }
+class RoutingV1(
+    private val staticPath: String,
+    private val repo: PostRepository,
+    private val fileService: FileService,
+    private val userService: UserService,
+    private val postService: PostService
+) {
 
 
+    fun setup(configuration: Routing) {
+        with(configuration) {
 
-    route("/api/v1/posts") {
+            route("/api/v1/") {
+                static("/static") {
+                    files(staticPath)
+                }
 
-        get {
-            val response = repo.getAll().map { PostResponseDto.fromModel(it) }
-            call.respond(response)
-        }
+                route("/") {
+                    post("/registration") {
+                        val input = call.receive<RegistrationRequestDto>()
+                        val response = userService.register(input)
+                        call.respond(response)
+                    }
+                    post("/authentication") {
+                        val input = call.receive<AuthenticationRequestDto>()
+                        val response = userService.authenticate(input)
+                        call.respond(response)
+                    }
+                }
 
-        get("/{id}") {
-            val id = call.parameters["id"]?.toIntOrNull() ?: throw ParameterConversionException("id", "Int")
-            val model = repo.getById(id) ?: throw NotFoundException()
-            val response = PostResponseDto.fromModel(model)
-            call.respond(response)
-        }
+                authenticate {
+                    route("/me") {
+                        get {
+                            val me = call.authentication.principal<UserModel>()
+                            call.respond(UserResponseDto.fromModel(me!!))
+                        }
+                    }
 
-        get("/{id}/like") {
-            val id = call.parameters["id"]?.toIntOrNull() ?: throw ParameterConversionException("id", "Int")
-            val model = repo.likeById(id) ?: throw NotFoundException()
-            val response = PostResponseDto.fromModel(model)
-            call.respond(response)
-        }
+                    route("/media") {
+                        post {
+                            val multipart = call.receiveMultipart()
+                            val response = fileService.save(multipart)
+                            call.respond(response)
+                        }
+                    }
 
-        get("/{id}/dislike") {
-            val id = call.parameters["id"]?.toIntOrNull() ?: throw ParameterConversionException("id", "Int")
-            val model = repo.dislikeById(id) ?: throw NotFoundException()
-            val response = PostResponseDto.fromModel(model)
-            call.respond(response)
-        }
+                    route("/posts") {
+                        get {
+                            call.respond(postService.getAll())
+                        }
+                        get("/{id}") {
+                            val id =
+                                call.parameters["id"]?.toIntOrNull() ?: throw ParameterConversionException("id", "Int")
+                            call.respond(postService.getByID(id))
+                        }
+                        post {
+                            val me = call.authentication.principal<UserModel>()
+                            val request = call.receive<PostRequestDto>()
+                            call.respond(postService.save(request, me!!))
+                        }
+                        delete("/{id}") {
+                            val id =
+                                call.parameters["id"]?.toIntOrNull() ?: throw ParameterConversionException("id", "Int")
+                            val me = call.authentication.principal<UserModel>()
+                            call.respond(postService.deleteById(id, me!!))
+                        }
+                        post("/{id}/likes") {
+                            val id =
+                                call.parameters["id"]?.toIntOrNull() ?: throw ParameterConversionException("id", "Int")
+                            call.respond(postService.likeById(id))
+                        }
+                        delete("/{id}/likes") {
+                            val id =
+                                call.parameters["id"]?.toIntOrNull() ?: throw ParameterConversionException("id", "Int")
+                            call.respond(postService.dislikeById(id))
+                        }
+                    }
 
-        post {
-            val post = call.receive<PostRequestDto>()
-            val model = PostModel(
-                post.id,
-                post.author,
-                post.content,
-                address = post.address,
-                location = post.location,
-                video = post.video,
-                postType = post.postType ?: PostType.SIMPLE_POST
-            )
-            val newPost = repo.save(model)
-            val response = PostResponseDto.fromModel(newPost)
-            call.respond(response)
-        }
+                    route("/repost") {
+                        post {
+                            val post = call.receive<RepostRequestDto>()
+                            val originalPost = repo.getById(post.originalPostId) ?: throw NotFoundException()
+                            val model = PostModel(
+                                post.id,
+                                post.author,
+                                post.content,
+                                post.created,
+                                source = originalPost,
+                                postType = PostType.REPOST
+                            )
+                            val newPost = repo.save(model)
+                            val response = PostResponseDto.fromModel(newPost)
+                            call.respond(response)
+                        }
+                    }
 
-        delete("/{id}") {
-            val id = call.parameters["id"]?.toIntOrNull() ?: throw ParameterConversionException("id", "Int")
-            repo.removeById(id)
-            call.respond(HttpStatusCode.NoContent)
-        }
-    }
-
-    route("/api/v1/repost") {
-        post {
-            val post = call.receive<RepostRequestDto>()
-            val originalPost = repo.getById(post.originalPostId) ?: throw NotFoundException()
-            val model = PostModel(
-                post.id,
-                post.author,
-                post.content,
-                post.created,
-                source = originalPost,
-                postType = PostType.REPOST
-            )
-            val newPost = repo.save(model)
-            val response = PostResponseDto.fromModel(newPost)
-            call.respond(response)
-        }
-    }
-
-    route("/api/v1/share") {
-        get("/{id}") {
-            val id = call.parameters["id"]?.toIntOrNull() ?: throw ParameterConversionException("id", "Int")
-            //что-то альтернативное можно сделать здесь?
-            val model = repo.getById(id) ?: throw NotFoundException()
-            val response = PostResponseDto.fromModel(model)
-            call.respond(response)
+                    route("/share") {
+                        get("/{id}") {
+                            val id =
+                                call.parameters["id"]?.toIntOrNull() ?: throw ParameterConversionException("id", "Int")
+                            val model = repo.getById(id) ?: throw NotFoundException()
+                            val response = PostResponseDto.fromModel(model)
+                            call.respond(response)
+                        }
+                    }
+                }
+            }
         }
     }
 }
