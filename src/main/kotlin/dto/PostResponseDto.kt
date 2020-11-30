@@ -1,13 +1,12 @@
 package dto
 
 import model.*
-import java.time.LocalDateTime
 
 data class PostResponseDto(
     val id: Int,
     val author: String,
     val content: String,
-    val created: LocalDateTime,
+    val created: Int,
     val likesCount: Int,
     val commentsCount: Int,
     val shareCount: Int,
@@ -20,8 +19,7 @@ data class PostResponseDto(
     val advertising: Advertising?,
     val source: PostModel?,
     val postType: PostType,
-    val isHidden: Boolean,
-    val timesShown: Long
+    val isHidden: Boolean
 ) {
     companion object {
         fun fromModel(model: PostModel) = PostResponseDto(
@@ -41,8 +39,7 @@ data class PostResponseDto(
             advertising = model.advertising,
             source = model.source,
             postType = model.postType,
-            isHidden = model.isHidden,
-            timesShown = model.timesShown
+            isHidden = model.isHidden
         )
     }
 }
