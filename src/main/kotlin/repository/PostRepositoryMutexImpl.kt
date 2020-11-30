@@ -79,13 +79,14 @@ class PostRepositoryMutexImpl : PostRepository {
     fun generateContent(): List<PostModel> {
 
         val createdTime = LocalDateTime.of(2020, 10, 1, 11, 11, 11)
+        val timeMillis = (System.currentTimeMillis() / 1000).toInt()
 
         val postsList = mutableListOf(
             PostModel(
                 1,
                 "Igor Prikhodko",
                 "Something",
-                createdTime,
+                timeMillis + 5_000,
                 likesCount = 1,
                 shareCount = 2,
                 likedByMe = true,
@@ -95,7 +96,7 @@ class PostRepositoryMutexImpl : PostRepository {
                 2,
                 "Tarzan from Africa",
                 "AAAAAaaaaAAAAAaaaAAAAaaa!!!!",
-                createdTime.plusHours(1),
+                timeMillis + 10_000,
                 likesCount = 10,
                 video = Video("https://www.youtube.com/watch?v=rxr3OzyGcyE"),
                 postType = PostType.VIDEO_POST
@@ -104,7 +105,7 @@ class PostRepositoryMutexImpl : PostRepository {
                 3,
                 "Shaverma",
                 "12:00 free 10 minutes",
-                createdTime.plusDays(1),
+                timeMillis - 5_000,
                 commentsCount = 3,
                 shareCount = 2,
                 commentedByMe = true,
@@ -116,7 +117,7 @@ class PostRepositoryMutexImpl : PostRepository {
                 4,
                 "WarMan",
                 "The World is mine!!!",
-                createdTime.plusMonths(1),
+                timeMillis - 10_000,
                 likesCount = 5,
                 shareCount = 2,
                 likedByMe = true
@@ -125,7 +126,7 @@ class PostRepositoryMutexImpl : PostRepository {
                 5,
                 "Brutal BatMan",
                 "Rock in my life!",
-                createdTime,
+                timeMillis,
                 likesCount = 100,
                 commentsCount = 3,
                 shareCount = 2,
@@ -144,7 +145,7 @@ class PostRepositoryMutexImpl : PostRepository {
                 6,
                 "CrazyMan",
                 "I want to see the world in the fire!!!",
-                createdTime.minusMonths(1),
+                timeMillis + 20_000,
                 likesCount = 2,
                 commentsCount = 0,
                 shareCount = 0,
