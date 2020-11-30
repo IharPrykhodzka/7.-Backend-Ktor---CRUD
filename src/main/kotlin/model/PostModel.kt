@@ -11,13 +11,11 @@ data class PostModel(
     val likedByMe: Boolean = false,
     val commentedByMe: Boolean = false,
     val sharedByMe: Boolean = false,
-    val address: String? = null,
-    val location: Location? = null,
-    val video: Video? = null,
-    val advertising: Advertising? = null,
+    val link: String? = null,
     val source: PostModel? = null,
     val postType: PostType = PostType.SIMPLE_POST,
     val isHidden: Boolean = false,
-    val timesShown: Long = 0
+    val timesShown: Long = 0,
+    val attachment: AttachmentModel? = null
 ) {
 }

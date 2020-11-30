@@ -1,6 +1,8 @@
 package dto
 
-import model.*
+import model.AttachmentModel
+import model.PostModel
+import model.PostType
 
 data class PostResponseDto(
     val id: Int,
@@ -13,14 +15,12 @@ data class PostResponseDto(
     val likedByMe: Boolean,
     val commentedByMe: Boolean,
     val sharedByMe: Boolean,
-    val address: String?,
-    val location: Location?,
-    val video: Video?,
-    val advertising: Advertising?,
+    val link: String? = null,
     val source: PostModel?,
     val postType: PostType,
     val isHidden: Boolean,
-    val timesShown: Long
+    val timesShown: Long,
+    val attachment: AttachmentModel?
 ) {
     companion object {
         fun fromModel(model: PostModel) = PostResponseDto(
@@ -34,14 +34,12 @@ data class PostResponseDto(
             likedByMe = model.likedByMe,
             commentedByMe = model.commentedByMe,
             sharedByMe = model.sharedByMe,
-            address = model.address,
-            location = model.location,
-            video = model.video,
-            advertising = model.advertising,
+            link = model.link,
             source = model.source,
             postType = model.postType,
             isHidden = model.isHidden,
-            timesShown = model.timesShown
+            timesShown = model.timesShown,
+            attachment = model.attachment
         )
     }
 }
