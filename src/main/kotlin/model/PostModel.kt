@@ -17,6 +17,11 @@ data class PostModel(
     val advertising: Advertising? = null,
     val source: PostModel? = null,
     val postType: PostType = PostType.SIMPLE_POST,
+<<<<<<< HEAD
     val isHidden: Boolean = false
+=======
+    val isHidden: Boolean = false,
+    val timesShown: Long = 0
+>>>>>>> parent of f9f104d... update v1.12
 ) {
 }
