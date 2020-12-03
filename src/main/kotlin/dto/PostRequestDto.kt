@@ -19,12 +19,8 @@ data class PostRequestDto(
     val advertising: Advertising?,
     val source: PostModel?,
     val postType: PostType,
-<<<<<<< HEAD
-    val isHidden: Boolean
-=======
     val isHidden: Boolean,
     val timesShown: Long
->>>>>>> parent of f9f104d... update v1.12
 ) {
     companion object {
         fun toModel(dto: PostRequestDto) = PostModel(
@@ -44,12 +40,8 @@ data class PostRequestDto(
             advertising = dto.advertising,
             source = dto.source,
             postType = dto.postType,
-<<<<<<< HEAD
-            isHidden = dto.isHidden
-=======
             isHidden = dto.isHidden,
             timesShown = dto.timesShown
->>>>>>> parent of f9f104d... update v1.12
         )
     }
 }

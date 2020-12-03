@@ -24,7 +24,6 @@ class UserService(
     }
 
     suspend fun changePassword(id: Int, input: PasswordChangeRequestDto) {
-        // TODO: handle concurrency
         val model = repo.getById(id) ?: throw NotFoundException()
         if (!passwordEncoder.matches(input.old, model.password)) {
             throw PasswordChangeException("Wrong password!")

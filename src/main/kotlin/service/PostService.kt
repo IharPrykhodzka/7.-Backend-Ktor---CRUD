@@ -18,7 +18,7 @@ class PostService(
     }
 
     suspend fun save(request: PostRequestDto, user: UserModel): PostResponseDto {
-        if (user.userName != request.author) { //TODO реализовать через id
+        if (user.userName != request.author) {
             throw ForbiddenException("Невозможно редактировать!")
         }
         val model = repo.save(
@@ -40,7 +40,7 @@ class PostService(
 
     suspend fun likeById(id: Int): PostResponseDto {
         val model = repo.getById(id) ?: throw NotFoundException()
-        val copy = model.copy(likesCount =  model.likesCount.inc()) //TODO реализовать учёт авторства лайков на строне сервера
+        val copy = model.copy(likesCount =  model.likesCount.inc())
         return PostResponseDto.fromModel(repo.save(copy))
     }
 
