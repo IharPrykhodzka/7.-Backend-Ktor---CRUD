@@ -4,10 +4,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
-import model.AttachmentModel
-import model.AttachmentType
-import model.PostModel
-import model.PostType
+import model.*
 import java.time.LocalDateTime
 import kotlin.coroutines.EmptyCoroutineContext
 
@@ -101,12 +98,23 @@ class PostRepositoryMutexImpl : PostRepository {
                 "AAAAAaaaaAAAAAaaaAAAAaaa!!!!",
                 timeMillis + 10_000,
                 likesCount = 10,
-                link = "https://www.youtube.com/watch?v=rxr3OzyGcyE",
-                postType = PostType.VIDEO_POST,
-                attachment = AttachmentModel("Rek", "https://www.youtube.com/watch?v=rxr3OzyGcyE", AttachmentType.VIDEO)
+                video = Video("https://www.youtube.com/watch?v=rxr3OzyGcyE"),
+                postType = PostType.VIDEO_POST
             ),
             PostModel(
                 3,
+                "Shaverma",
+                "12:00 free 10 minutes",
+                timeMillis - 5_000,
+                commentsCount = 3,
+                shareCount = 2,
+                commentedByMe = true,
+                address = "Санкт-Петербург, Коменданский пр.",
+                location = 60.012878 x 30.252335,
+                postType = PostType.EVENT_POST
+            ),
+            PostModel(
+                4,
                 "WarMan",
                 "The World is mine!!!",
                 timeMillis - 10_000,
@@ -124,9 +132,11 @@ class PostRepositoryMutexImpl : PostRepository {
                 shareCount = 2,
                 likedByMe = true,
                 sharedByMe = true,
-                link = "https://www.arhybes.com/video-batmetal",
-                postType = PostType.ADVERTISING,
-                attachment = AttachmentModel("Funny Batman", "https://www.arhybes.com/video-batmetal", AttachmentType.VIDEO)
+                advertising = Advertising(
+                    "https://static-ru.insales.ru/images/products/1/6335/205330623/460c2a624899693ea071e424032b89c5572eaa0a.jpg",
+                    "https://www.arhybes.com/video-batmetal"
+                ),
+                postType = PostType.ADVERTISING
             )
         )
 

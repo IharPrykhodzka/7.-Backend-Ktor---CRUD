@@ -1,8 +1,6 @@
 package dto
 
-import model.AttachmentModel
-import model.PostModel
-import model.PostType
+import model.*
 
 data class PostResponseDto(
     val id: Int,
@@ -15,7 +13,10 @@ data class PostResponseDto(
     val likedByMe: Boolean,
     val commentedByMe: Boolean,
     val sharedByMe: Boolean,
-    val link: String? = null,
+    val address: String?,
+    val location: Location?,
+    val video: Video?,
+    val advertising: Advertising?,
     val source: PostModel?,
     val postType: PostType,
     val isHidden: Boolean,
@@ -33,7 +34,10 @@ data class PostResponseDto(
             likedByMe = model.likedByMe,
             commentedByMe = model.commentedByMe,
             sharedByMe = model.sharedByMe,
-            link = model.link,
+            address = model.address,
+            location = model.location,
+            video = model.video,
+            advertising = model.advertising,
             source = model.source,
             postType = model.postType,
             isHidden = model.isHidden,
