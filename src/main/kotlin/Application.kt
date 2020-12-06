@@ -1,4 +1,3 @@
-
 import error.ForbiddenException
 import error.RegistrationException
 import io.ktor.application.*
@@ -78,6 +77,9 @@ fun Application.module(testing: Boolean = false) {
                 environment.config.propertyOrNull("ktor.ncraft.tokenLifeTime")?.getString()?.toLongOrNull()
                     ?: throw ConfigurationException("Upload dir is not specified")
                 )
+        constant(tag = "secret") with (
+                environment.config.propertyOrNull("ktor.ncraft.secret")?.getString()
+                    ?: throw ConfigurationException("Secret is not specified"))
         bind<PostRepository>() with singleton {
             PostRepositoryMutexImpl().apply {
                 runBlocking {
@@ -96,11 +98,16 @@ fun Application.module(testing: Boolean = false) {
                 passwordEncoder = instance()
             ).apply {
                 runBlocking {
-                   this@apply.saveNewModel(userName = "Igor", password = "1qaz2wsx")
+                    this@apply.saveNewModel(userName = "Igor", password = "1qaz2wsx")
                 }
             }
         }
-        bind<JWTTokenService>() with eagerSingleton { JWTTokenService(instance("token-life-time")) }
+        bind<JWTTokenService>() with eagerSingleton {
+            JWTTokenService(
+                instance("token-life-time"),
+                instance("secret")
+            )
+        }
         bind<PasswordEncoder>() with eagerSingleton { BCryptPasswordEncoder() }
         bind<RoutingV1>() with eagerSingleton {
             RoutingV1(

@@ -5,8 +5,7 @@ import com.auth0.jwt.JWTVerifier
 import com.auth0.jwt.algorithms.Algorithm
 import java.util.*
 
-class JWTTokenService(private val tokenLifeTime: Long) {
-    private val secret = "5c2dbef6-289c-46e6-8cfd-d8b3292d373a" //TODO вынести в Application.conf
+class JWTTokenService(private val tokenLifeTime: Long, private val secret: String) {
     private val algo = Algorithm.HMAC256(secret)
 
 

@@ -93,23 +93,37 @@ class RoutingV1(
                                 call.parameters["id"]?.toIntOrNull() ?: throw ParameterConversionException("id", "Int")
                             call.respond(postService.dislikeById(id))
                         }
-                    }
 
-                    route("/repost") {
-                        post {
-                            val post = call.receive<RepostRequestDto>()
-                            val originalPost = repo.getById(post.originalPostId) ?: throw NotFoundException()
-                            val model = PostModel(
-                                post.id,
-                                post.author,
-                                post.content,
-                                post.created,
-                                source = originalPost,
-                                postType = PostType.REPOST
-                            )
-                            val newPost = repo.save(model)
-                            val response = PostResponseDto.fromModel(newPost)
-                            call.respond(response)
+
+                        post("/{id}/reposts") {
+                            val id =
+                                call.parameters["id"]?.toIntOrNull() ?: throw ParameterConversionException(
+                                    "id",
+                                    "Int"
+                                )
+                            val repostRequestDto = call.receive<RepostRequestDto>()
+                            val me = call.authentication.principal<UserModel>()
+                            call.respond(postService.repostById(id, me!!, repostRequestDto))
+                        }
+                        get("/{count}/recent/") { ///recent/10 (
+                            val count =
+                                call.parameters["count"]?.toIntOrNull() ?: throw ParameterConversionException(
+                                    "count",
+                                    "Int"
+                                )
+                            call.respond(postService.getRecent(count))
+                        }
+                        get("/{id}/after") {
+                            val id =
+                                call.parameters["id"]?.toIntOrNull() ?: throw ParameterConversionException(
+                                    "id",
+                                    "Int"
+                                )
+                            call.respond(postService.getPostsAfter(id))
+                        }
+                        post("/before") {
+                            val postsCreatedBeforeRequestDto = call.receive<PostsCreatedBeforeRequestDto>()
+                            call.respond(postService.getPostsCreatedBefore(postsCreatedBeforeRequestDto))
                         }
                     }
 

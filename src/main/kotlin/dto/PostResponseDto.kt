@@ -6,7 +6,7 @@ data class PostResponseDto(
     val id: Int,
     val author: String,
     val content: String,
-    val created: Int,
+    val created: Long,
     val likesCount: Int,
     val commentsCount: Int,
     val shareCount: Int,
@@ -19,7 +19,6 @@ data class PostResponseDto(
     val advertising: Advertising?,
     val source: PostModel?,
     val postType: PostType,
-    val isHidden: Boolean,
     val timesShown: Long
 ) {
     companion object {
@@ -40,8 +39,8 @@ data class PostResponseDto(
             advertising = model.advertising,
             source = model.source,
             postType = model.postType,
-            isHidden = model.isHidden,
             timesShown = model.timesShown
+
         )
     }
 }

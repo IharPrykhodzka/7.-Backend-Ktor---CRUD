@@ -12,12 +12,34 @@ import java.nio.file.Paths
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
+
 class ApplicationTest {
     private val jsonContentType = ContentType.Application.Json.withCharset(Charsets.UTF_8)
     private val multipartBoundary = "***blob***"
     private val multipartContentType =
         ContentType.MultiPart.FormData.withParameter("boundary", multipartBoundary).toString()
     private val uploadPath = Files.createTempDirectory("test").toString()
+
+//    private val configure: Application.() -> Unit = {
+//        (environment.config as MapApplicationConfig).apply {
+//            put("ktor.ncraft.upload.dir", uploadPath)
+//            put("ktor.ncraft.secret", "secret")
+//            put("ktor.ncraft.tokenLifeTime", "1000")
+//        }
+//        module()
+//    }
+
+    private fun configure(config: MapApplicationConfig.() -> Unit = {}): Application.() -> Unit = {
+        (environment.config as MapApplicationConfig).apply {
+            put("ktor.ncraft.upload.dir", uploadPath)
+            put("ktor.ncraft.secret", "secret")
+            put("ktor.ncraft.tokenLifeTime", "1000")
+            config()
+        }
+        module()
+    }
+
+
 
     @Test
     fun testUpload() {
@@ -59,6 +81,8 @@ class ApplicationTest {
         withTestApplication(configure()) {
             with(handleRequest(HttpMethod.Get, "/api/v1/posts")) {
                 assertEquals(HttpStatusCode.Unauthorized, response.status())
+                println(response.content)
+                println(response.status())
             }
         }
     }
@@ -78,16 +102,13 @@ class ApplicationTest {
 
     @Test
     fun testExpire() {
-        withTestApplication(configure {
-            put("ktor.ncraft.tokenLifeTime", "-1000")
-        }, {
+        withTestApplication(configure()){
             with(handleRequest(HttpMethod.Get, "/api/v1/me") {
                 addHeader(HttpHeaders.Authorization, "Bearer ${register()}")
             }) {
                 assertEquals(HttpStatusCode.Unauthorized, response.status())
             }
         }
-        )
     }
 
 
@@ -98,7 +119,7 @@ class ApplicationTest {
                 addHeader(HttpHeaders.Authorization, "Bearer ${authenticator()}")
             }) {
                 assertEquals(HttpStatusCode.OK, response.status())
-                val username = JsonPath.read<String>(response.content!!, "$.username")
+                val username = JsonPath.read<String>(response.content!!, "$.userName")
                 assertEquals("Igor", username)
             }
         }
@@ -119,14 +140,7 @@ class ApplicationTest {
             JsonPath.read(it.response.content!!, "$.token")
         }
 
-    private fun configure(config: MapApplicationConfig.() -> Unit = {}): Application.() -> Unit = {
-        (environment.config as MapApplicationConfig).apply {
-            put("ktor.ncraft.upload.dir", uploadPath)
-            put("ktor.ncraft.tokenLifeTime", "1000")
-            config()
-        }
-        module()
-    }
+
 
     private fun TestApplicationEngine.register(): String =
         handleRequest(HttpMethod.Post, "/api/v1/registration") {
