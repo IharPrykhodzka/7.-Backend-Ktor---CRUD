@@ -20,15 +20,6 @@ class ApplicationTest {
         ContentType.MultiPart.FormData.withParameter("boundary", multipartBoundary).toString()
     private val uploadPath = Files.createTempDirectory("test").toString()
 
-//    private val configure: Application.() -> Unit = {
-//        (environment.config as MapApplicationConfig).apply {
-//            put("ktor.ncraft.upload.dir", uploadPath)
-//            put("ktor.ncraft.secret", "secret")
-//            put("ktor.ncraft.tokenLifeTime", "1000")
-//        }
-//        module()
-//    }
-
     private fun configure(config: MapApplicationConfig.() -> Unit = {}): Application.() -> Unit = {
         (environment.config as MapApplicationConfig).apply {
             put("ktor.ncraft.upload.dir", uploadPath)
@@ -102,7 +93,9 @@ class ApplicationTest {
 
     @Test
     fun testExpire() {
-        withTestApplication(configure()){
+        withTestApplication(configure {
+            put("ktor.ncraft.tokenLifeTime", "-1000")
+        }){
             with(handleRequest(HttpMethod.Get, "/api/v1/me") {
                 addHeader(HttpHeaders.Authorization, "Bearer ${register()}")
             }) {
@@ -110,7 +103,6 @@ class ApplicationTest {
             }
         }
     }
-
 
     @Test
     fun testAuth() {

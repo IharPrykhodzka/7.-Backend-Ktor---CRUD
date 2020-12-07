@@ -10,7 +10,7 @@ import java.time.LocalDateTime
 import kotlin.coroutines.EmptyCoroutineContext
 
 class PostRepositoryMutexImpl : PostRepository {
-    private var nextId = 0
+    private var nextId = 1
     private val items = mutableListOf<PostModel>()
     private val mutex = Mutex()
 
@@ -116,7 +116,7 @@ class PostRepositoryMutexImpl : PostRepository {
         return oldPosts.sortedByDescending { it.created }
     }
 
-    fun generateContent(): List<PostModel> {
+    private fun generateContent(): List<PostModel> {
 
         val timeMillis = System.currentTimeMillis()
 
