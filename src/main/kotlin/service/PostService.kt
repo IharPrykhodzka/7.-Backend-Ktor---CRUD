@@ -42,15 +42,15 @@ class PostService(
         return response
     }
 
-    suspend fun likeById(id: Int): PostResponseDto {
-        val model = repo.getById(id) ?: throw NotFoundException()
-        val copy = model.copy(likesCount =  model.likesCount.inc()) //TODO реализовать учёт авторства лайков на строне сервера
+    suspend fun likeById(id: Int, userId: Int): PostResponseDto {
+        val model = repo.likeById(id, userId) ?: throw NotFoundException()
+        val copy = model.copy(likesCount =  model.likesCount.inc(), likedByMe = model.likedByMe)
         return PostResponseDto.fromModel(repo.save(copy))
     }
 
-    suspend fun dislikeById(id: Int): PostResponseDto {
-        val model = repo.getById(id) ?: throw NotFoundException()
-        val copy = model.copy(likesCount = model.likesCount.dec())
+    suspend fun dislikeById(id: Int, userId: Int): PostResponseDto {
+        val model = repo.dislikeById(id, userId) ?: throw NotFoundException()
+        val copy = model.copy(likesCount = model.likesCount.dec(), likedByMe = model.likedByMe)
         return PostResponseDto.fromModel(repo.save(copy))
     }
 

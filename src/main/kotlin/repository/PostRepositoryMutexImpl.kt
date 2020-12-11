@@ -1,12 +1,13 @@
 package repository
 
+import error.AlreadyLikedException
+import error.NotLikedYetException
 import error.PostNotFoundException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import model.*
-import java.time.LocalDateTime
 import kotlin.coroutines.EmptyCoroutineContext
 
 class PostRepositoryMutexImpl : PostRepository {
@@ -53,26 +54,37 @@ class PostRepositoryMutexImpl : PostRepository {
         }
     }
 
-    override suspend fun likeById(id: Int): PostModel? = mutex.withLock {
-        when (val index = items.indexOfFirst { it.id == id }) {
-            -1 -> null
-            else -> {
-                val item = items[index]
-                val newItem = item.copy(likesCount = item.likesCount + 1)
-                items[index] = newItem
-                newItem
+    override suspend fun likeById(id: Int, userId: Int): PostModel? {
+        mutex.withLock {
+            return when (val index = items.indexOfFirst { it.id == id }) {
+                -1 -> null
+                else -> {
+                    val item = items[index]
+                    if (!item.likedByMe.contains(userId)) {
+                        item.likedByMe.add(userId)
+                        val newItem = item.copy(likesCount = item.likesCount + 1, likedByMe = item.likedByMe)
+                        items[index] = newItem
+                        newItem
+                    } else throw AlreadyLikedException()
+                }
             }
         }
     }
 
-    override suspend fun dislikeById(id: Int): PostModel? = mutex.withLock {
-        when (val index = items.indexOfFirst { it.id == id }) {
-            -1 -> null
-            else -> {
-                val item = items[index]
-                val newItem = if (item.likesCount > 0) item.copy(likesCount = item.likesCount - 1) else item
-                items[index] = newItem
-                newItem
+
+    override suspend fun dislikeById(id: Int, userId: Int): PostModel? {
+        mutex.withLock {
+            return when (val index = items.indexOfFirst { it.id == id }) {
+                -1 -> null
+                else -> {
+                    val item = items[index]
+                    if (!item.likedByMe.contains(userId)) {
+                        item.likedByMe.remove(userId)
+                        val newItem = item.copy(likesCount = item.likesCount - 1, likedByMe = item.likedByMe)
+                        items[index] = newItem
+                        newItem
+                    } else throw NotLikedYetException()
+                }
             }
         }
     }
@@ -127,9 +139,7 @@ class PostRepositoryMutexImpl : PostRepository {
                 "Something",
                 timeMillis + 5_000,
                 likesCount = 1,
-                shareCount = 2,
-                likedByMe = true,
-                sharedByMe = true
+                shareCount = 2
             ),
             PostModel(
                 2,
@@ -145,9 +155,7 @@ class PostRepositoryMutexImpl : PostRepository {
                 "Shaverma",
                 "12:00 free 10 minutes",
                 timeMillis - 5_000,
-                commentsCount = 3,
                 shareCount = 2,
-                commentedByMe = true,
                 address = "Санкт-Петербург, Коменданский пр.",
                 location = 60.012878 x 30.252335,
                 postType = PostType.EVENT_POST
@@ -158,8 +166,7 @@ class PostRepositoryMutexImpl : PostRepository {
                 "The World is mine!!!",
                 timeMillis - 10_000,
                 likesCount = 5,
-                shareCount = 2,
-                likedByMe = true
+                shareCount = 2
             ),
             PostModel(
                 5,
@@ -167,10 +174,7 @@ class PostRepositoryMutexImpl : PostRepository {
                 "Rock in my life!",
                 timeMillis,
                 likesCount = 100,
-                commentsCount = 3,
                 shareCount = 2,
-                likedByMe = true,
-                sharedByMe = true,
                 advertising = Advertising(
                     "https://static-ru.insales.ru/images/products/1/6335/205330623/460c2a624899693ea071e424032b89c5572eaa0a.jpg",
                     "https://www.arhybes.com/video-batmetal"
@@ -179,21 +183,17 @@ class PostRepositoryMutexImpl : PostRepository {
             )
         )
 
-        postsList.add(
-            PostModel(
-                6,
-                "CrazyMan",
-                "I want to see the world in the fire!!!",
-                timeMillis + 20_000,
-                likesCount = 2,
-                commentsCount = 0,
-                shareCount = 0,
-                likedByMe = true,
-                sharedByMe = false,
-                source = postsList[4],
-                postType = PostType.REPOST
-            )
-        )
+//        postsList.add(
+//            PostModel(
+//                6,
+//                "CrazyMan",
+//                "I want to see the world in the fire!!!",
+//                timeMillis + 20_000,
+//                likesCount = 2,
+//                source = postsList[4],
+//                postType = PostType.REPOST
+//            )
+//        )
         return postsList
     }
 

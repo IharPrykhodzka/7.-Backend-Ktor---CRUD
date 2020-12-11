@@ -8,6 +8,7 @@ import io.ktor.http.content.*
 import io.ktor.request.*
 import io.ktor.response.*
 import io.ktor.routing.*
+import io.ktor.util.pipeline.*
 import model.PostModel
 import model.PostType
 import model.UserModel
@@ -16,6 +17,11 @@ import service.FileService
 import service.PostService
 import service.UserService
 
+val <T: Any> PipelineContext<T, ApplicationCall>.id
+    get() = call.parameters["id"]?.toIntOrNull() ?: throw ParameterConversionException("id", "Long")
+
+val <T: Any> PipelineContext<T, ApplicationCall>.me
+    get() = call.authentication.principal<UserModel>()
 
 class RoutingV1(
     private val staticPath: String,
@@ -68,30 +74,20 @@ class RoutingV1(
                             call.respond(postService.getAll())
                         }
                         get("/{id}") {
-                            val id =
-                                call.parameters["id"]?.toIntOrNull() ?: throw ParameterConversionException("id", "Int")
                             call.respond(postService.getByID(id))
                         }
                         post {
-                            val me = call.authentication.principal<UserModel>()
                             val request = call.receive<PostRequestDto>()
                             call.respond(postService.save(request, me!!))
                         }
                         delete("/{id}") {
-                            val id =
-                                call.parameters["id"]?.toIntOrNull() ?: throw ParameterConversionException("id", "Int")
-                            val me = call.authentication.principal<UserModel>()
                             call.respond(postService.deleteById(id, me!!))
                         }
-                        post("/{id}/likes") {
-                            val id =
-                                call.parameters["id"]?.toIntOrNull() ?: throw ParameterConversionException("id", "Int")
-                            call.respond(postService.likeById(id))
+                        put("/{id}/likes") {
+                            call.respond(postService.likeById(id, me!!.id))
                         }
-                        delete("/{id}/likes") {
-                            val id =
-                                call.parameters["id"]?.toIntOrNull() ?: throw ParameterConversionException("id", "Int")
-                            call.respond(postService.dislikeById(id))
+                        put("/{id}/dislike") {
+                            call.respond(postService.dislikeById(id, me!!.id))
                         }
 
 
@@ -102,7 +98,6 @@ class RoutingV1(
                                     "Int"
                                 )
                             val repostRequestDto = call.receive<RepostRequestDto>()
-                            val me = call.authentication.principal<UserModel>()
                             call.respond(postService.repostById(id, me!!, repostRequestDto))
                         }
                         get("/{count}/recent/") { ///recent/10 (
@@ -129,8 +124,6 @@ class RoutingV1(
 
                     route("/share") {
                         get("/{id}") {
-                            val id =
-                                call.parameters["id"]?.toIntOrNull() ?: throw ParameterConversionException("id", "Int")
                             val model = repo.getById(id) ?: throw NotFoundException()
                             val response = PostResponseDto.fromModel(model)
                             call.respond(response)
