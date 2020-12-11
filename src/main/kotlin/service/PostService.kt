@@ -68,18 +68,5 @@ class PostService(
         return PostResponseDto.fromModel(repost)
     }
 
-    suspend fun getRecent(count: Int):  List<PostResponseDto> {
-        val recent = repo.getRecent(count)
-        return recent.map(PostResponseDto.Companion::fromModel)
-    }
 
-    suspend fun getPostsAfter(id: Int): List<PostResponseDto> {
-        val newPosts = repo.getPostsAfter(id)
-        return newPosts.map(PostResponseDto.Companion::fromModel)
-    }
-
-    suspend fun getPostsCreatedBefore (dto: PostsCreatedBeforeRequestDto): List<PostResponseDto> {
-        val oldPosts = repo.getPostsCreatedBefore(dto.idCurPost, dto.countUploadedPosts)
-        return oldPosts.map(PostResponseDto.Companion::fromModel)
-    }
 }

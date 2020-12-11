@@ -89,45 +89,6 @@ class PostRepositoryMutexImpl : PostRepository {
         }
     }
 
-    override suspend fun getRecent(count: Int): List<PostModel> {
-        if (count >= items.size) {
-            return items.asReversed().toList()
-        }
-        if (count == 0) {
-            return emptyList()
-        }
-
-        val recent = mutableListOf<PostModel>()
-        for (i in 1..count) {
-            recent.add(items[items.size - i])
-        }
-        return recent
-    }
-
-    override suspend fun getPostsAfter(id: Int): List<PostModel> {
-        val targetPost = items.find { it.id == id } ?: throw PostNotFoundException()
-        val newPosts = mutableListOf<PostModel>()
-        items.forEach {
-            if (it.created > targetPost.created) {
-                newPosts.add(it)
-            }
-        }
-
-        return newPosts.sortedByDescending { it.created }
-    }
-
-    override suspend fun getPostsCreatedBefore(idCurPost: Int, countUploadedPosts: Int): List<PostModel> {
-        val targetPost = items.find { it.id == idCurPost } ?: throw PostNotFoundException()
-        val oldPosts = mutableListOf<PostModel>()
-        items.forEach {
-            if (it.created < targetPost.created) {
-                oldPosts.add(it)
-            }
-        }
-
-        return oldPosts.sortedByDescending { it.created }
-    }
-
     private fun generateContent(): List<PostModel> {
 
         val timeMillis = System.currentTimeMillis()

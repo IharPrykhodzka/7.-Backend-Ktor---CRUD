@@ -100,26 +100,7 @@ class RoutingV1(
                             val repostRequestDto = call.receive<RepostRequestDto>()
                             call.respond(postService.repostById(id, me!!, repostRequestDto))
                         }
-                        get("/{count}/recent/") { ///recent/10 (
-                            val count =
-                                call.parameters["count"]?.toIntOrNull() ?: throw ParameterConversionException(
-                                    "count",
-                                    "Int"
-                                )
-                            call.respond(postService.getRecent(count))
-                        }
-                        get("/{id}/after") {
-                            val id =
-                                call.parameters["id"]?.toIntOrNull() ?: throw ParameterConversionException(
-                                    "id",
-                                    "Int"
-                                )
-                            call.respond(postService.getPostsAfter(id))
-                        }
-                        post("/before") {
-                            val postsCreatedBeforeRequestDto = call.receive<PostsCreatedBeforeRequestDto>()
-                            call.respond(postService.getPostsCreatedBefore(postsCreatedBeforeRequestDto))
-                        }
+
                     }
 
                     route("/share") {

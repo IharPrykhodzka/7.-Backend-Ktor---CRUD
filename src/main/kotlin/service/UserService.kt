@@ -4,6 +4,8 @@ import dto.*
 import error.PasswordChangeException
 import error.RegistrationException
 import io.ktor.features.*
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import model.UserModel
 import org.springframework.security.crypto.password.PasswordEncoder
 import repository.UserRepository
@@ -13,6 +15,8 @@ class UserService(
     private val tokenService: JWTTokenService,
     private val passwordEncoder: PasswordEncoder
 ) {
+
+    private val mutex = Mutex()
 
     suspend fun getModelById(id: Int): UserModel? {
         return repo.getById(id)
@@ -40,7 +44,7 @@ class UserService(
             throw PasswordChangeException("Wrong password!")
         }
         val token = tokenService.generate(model.id)
-        return AuthenticationResponseDto(token)
+        return AuthenticationResponseDto(model.id, token)
     }
 
     suspend fun saveNewModel(userName: String, password: String): UserModel {
@@ -48,13 +52,12 @@ class UserService(
         return repo.save(model)
     }
 
-    suspend fun register(input: RegistrationRequestDto): RegistrationResponseDto {
-        if (repo.getByUsername(input.userName) != null) {
-            throw RegistrationException()
+    suspend fun register(input: RegistrationRequestDto): AuthenticationResponseDto {
+        mutex.withLock {
+            val model =
+                repo.add(UserModel(userName = input.userName, password = passwordEncoder.encode(input.password)))
+            val token = tokenService.generate(model.id)
+            return AuthenticationResponseDto(model.id, token)
         }
-
-        val model = saveNewModel(input.userName, input.password)
-        val token = tokenService.generate(model.id)
-        return RegistrationResponseDto(token)
     }
 }

@@ -33,6 +33,14 @@ class UserRepositoryInMemoryWithMutexImpl : UserRepository {
         }
     }
 
+    override suspend fun add(item: UserModel): UserModel {
+        mutex.withLock {
+            val copy = item.copy(id = nextId++)
+            items.add(copy)
+            return copy
+        }
+    }
+
     override suspend fun save(item: UserModel): UserModel =
         mutex.withLock {
             when(val index = items.indexOfFirst { it.id == item.id }) {
